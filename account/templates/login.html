@@ -1,0 +1,20 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Sign in{% endblock %}
+
+{% block body %}
+    <div class = "container">
+        <br>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {% for i in x|rjust:9 %}
+                &nbsp;
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Sign in</button>
+            {% for i in x|rjust:6 %}
+                &nbsp;
+            {% endfor %}
+        </form>
+    </div>
+{% endblock %}

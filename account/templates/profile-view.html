@@ -1,0 +1,50 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h2 style="color: darkslategray;"><strong>{{ user.username }}</strong></h2>
+        <table class="table table-sm">
+          <tbody>
+            <tr>
+                <td><p style="color: darkgrey">First name:</p></td>
+                <td><p style="color: black">{{ user.first_name }}</p></td>
+            </tr>
+            <tr>
+                <td><p style="color: darkgrey">Last name:</p></td>
+                <td><p style="color: black">{{ user.last_name }}</p></td>
+            </tr>
+            <tr>
+                <td><p style="color: darkgrey">city:</p></td>
+                <td><p style="color: black">{{ user.profile.city }}</p></td>
+            </tr>
+            <tr>
+                <td><p style="color: darkgrey">phone:</p></td>
+                <td><p style="color: black">{{ user.profile.phone }}</p></td>
+            </tr>
+          </tbody>
+        </table>
+        {% if current_user == user %}
+            <a href="{% url 'edit_profile' %}"><button class="btn btn-primary">Edit profile</button></a>
+        {% endif %}
+    </div>
+    <hr>
+    <div class="container">
+        {% for post in posts %}
+            {% if post.published_date %}
+            <li class="list-group-item">
+                <a href="{% url 'post_details' pk=post.pk %}">
+                    <button class="btn btn-primary" style="height: 39px;">
+                            <h5>{{ post.title }}</h5>
+                    </button>
+                </a>
+                <p></p>
+                <a href="{% url 'show_profile' pk=user.pk %}"><h6 style="color: grey;">@{{ user.username }}</h6></a><br>
+                <p>{{ post.text }}</p>
+                <p style="font-size: 12px; color: grey;">{{ post.published_date }}</p>
+            </li>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}

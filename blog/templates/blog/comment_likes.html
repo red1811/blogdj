@@ -1,0 +1,10 @@
+{% extends 'blog/base.html' %}
+{% block title %}Likes of comment{% endblock %}
+
+{% block body %}
+    <div class="container">
+        {% for like_author in comment.like_activated_author %}
+            <p>{{ like_author }}</p>
+        {% endfor %}
+    </div>
+{% endblock %}

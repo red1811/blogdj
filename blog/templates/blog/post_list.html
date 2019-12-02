@@ -1,0 +1,46 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Posts{% endblock %}
+
+{% block body %}
+    {% for post in posts %}
+        <div class="container">
+    <li class="list-group-item">
+        <a href="{% url 'post_details' pk=post.pk %}">
+                <button class="btn btn-primary" style="height: 39px;">
+                        <h5>{{ post.title }}</h5>
+                </button>
+        </a>
+        <p></p>
+        <a href="{% url 'show_profile' pk=post.author.pk %}"><h6 style="color: grey;">@{{ post.author.username }}</h6></a><br>
+        <br>
+        <br>
+        <p>{{ post.text }}</p>
+            {% if post.published_date %}
+                <p style="font-size: 12px; color: grey;">{{ post.published_date }}</p>
+                </li>
+                {% for comment in comments %}
+                    <li class="list-group-item">
+                        <h5>
+                            <a href="#">{{ comment.author }}</a>
+                        </h5>
+                        <p>{{ comment.content }}</p>
+                        {% if user == post.author or user == comment.author %}
+                            <a href="{% url 'delete_comment' pk=comment.pk %}" style="margin-left: 93%;">
+                                <button class="btn btn-danger">
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>Delete
+                                </button>
+                            </a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li class="list-group-item"><p>Created date: {{ post.created_date }}</p></li>
+            {% endif %}
+    <br>
+    </div>
+    {% endfor %}
+    {% if user.is_authenticated %}
+        <a href="{% url 'make_post' %}" style="margin-left: 165px;"><button class="btn btn-primary">Write new post</button></a>
+    {% endif %}
+{% endblock %}

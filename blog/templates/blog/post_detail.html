@@ -1,0 +1,85 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}{{ post.author }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+    <li class="list-group-item">
+        <h5 style="color: #404040;">{{ post.title }}</h5>
+        <a href="{% url 'show_profile' pk=post.author.pk %}"><h6 style="color: grey;">@{{ post.author.username }}</h6></a><br>
+        <p>{{ post.text }}</p>
+            {% if post.published_date %}
+                <p style="margin-left: 930px;">Likes: <a href="{% url 'post_likes' pk=post.pk %}">{{ post.like }}</a></p>
+                {% if user.is_authenticated %}
+                    {% if user.username not in post.like_activated_author %}
+                        <a href="{% url 'add_like_to_post' pk=post.pk %}" style="margin-left: 930px;"><button class="btn btn-primary">Like</button></a>
+                    {% else %}
+                        <a href="{% url 'remove_like_from_post' pk=post.pk %}" style="margin-left: 930px;"><button class="btn btn-primary">Dislike</button></a>
+                    {% endif %}
+                    <p style="font-size: 12px; color: grey;">{{ post.published_date }}</p>
+                    </li>
+                {% endif %}
+                    {% if comments.count %}
+                        <br>
+                        <p style="margin-left: 10px;">Comments:</p>
+                    {% endif %}
+                {% for comment in comments %}
+                    <li class="list-group-item">
+                        <h5>
+                            <a href="{% url 'show_profile' pk=comment.author.pk %}" style="color: grey;">@{{ comment.author }}</a><p></p>
+                            <p style="font-size: 12px; color: grey;">{{ comment.created_date }}</p>
+                            <hr>
+                        </h5>
+                        <p>{{ comment.content }}</p>
+                        <p style="margin-left: 930px;">Likes: <a href="{% url 'comment_likes' pk=post.pk %}">{{ comment.like }}</a></p>
+                    {% if user.is_authenticated %}
+                        {% if user.username not in comment.like_activated_author %}
+                            <a href="{% url 'add_like_to_comment' pk=post.pk %}" style="margin-left: 930px;"><button class="btn btn-primary">Like</button></a>
+                            {% if user == post.author or user == comment.author %}
+                            <a href="{% url 'delete_comment' pk=comment.pk %}" style="">
+                                <button class="btn btn-danger">
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>Delete
+                                </button>
+                            </a>
+                        {% endif %}
+                        {% else %}
+                            <a href="{% url 'remove_like_from_comment' pk=post.pk %}" style="margin-left: 910px;"><button class="btn btn-primary">Dislike</button></a>
+                            {% if user == post.author or user == comment.author %}
+                            <a href="{% url 'delete_comment' pk=comment.pk %}" style="">
+                                <button class="btn btn-danger">
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>Delete
+                                </button>
+                            </a>
+                        {% endif %}
+                        {% endif %}
+                    {% endif %}
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li class="list-group-item"><p>Created date: {{ post.created_date }}</p></li>
+            {% endif %}
+    <br>
+    {% if post.published_date %}
+        {% if user.is_authenticated %}
+    <div class="comment">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Add comment</button>
+        </form>
+    </div>
+        {% endif %}
+    {% endif %}
+    </div>
+    <br>
+    {% if user == post.author %}
+    <a href="{% url 'edit_post' pk=post.pk %}" style="margin-left: 165px;"><button class="btn btn-primary">Edit post</button></a>
+    {% if not post.published_date %}
+        <a href="{% url 'delete_post' pk=post.pk %}" style="margin-left: 400px;"><button class="btn btn-danger">Delete</button></a>
+        <a href="{% url 'publish_post' pk=post.pk %}"><button class="btn btn-warning" style="margin-left: 459px;">Publish</button></a>
+    {% else %}
+        <a href="{% url 'delete_post' pk=post.pk %}"><button class="btn btn-danger" style="margin-left: 411px;">Delete</button></a>
+        <a href="{% url 'move_to_drafts' pk=post.pk %}"><button class="btn btn-warning" style="margin-left: 392px;">Move to drafts</button></a>
+    {% endif %}
+    {% endif %}
+{% endblock %}
